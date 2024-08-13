@@ -20,7 +20,8 @@ public partial class InputManager : MonoBehaviour
         look = GetComponent<PlayerLook>();
         
         onFoot.Jump.performed += ctx => motor.Jump();
-        onFoot.Crouch.performed += ctx => motor.Crouch();
+        onFoot.Crouch.performed += ctx => motor.StartCrouch();
+        onFoot.Crouch.canceled += ctx => motor.StopCrouch();
         onFoot.Sprint.performed += ctx => motor.Sprint();
     }
 

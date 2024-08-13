@@ -8,6 +8,8 @@ public class SearchState : BaseState
     private float moveTimer;
     public override void Enter()
     {
+        searchTimer = 0; 
+        moveTimer = 0;
         enemy.Agent.SetDestination(enemy.LastKnownPos);
     
     }
