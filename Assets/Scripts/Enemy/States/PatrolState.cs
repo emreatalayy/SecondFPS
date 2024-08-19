@@ -8,16 +8,29 @@ public class PatrolState : BaseState
     public float waitTimer;
     public override void Enter()
     {
+        if (enemy == null)
+        {
+            Debug.LogError("PatrolState'te enemy nesnesi null.");
+            return;
+        }
+        
+        if (enemy.Animator == null)
+        {
+            Debug.LogError("Enemy nesnesinde Animator bileşeni eksik.");
+            return;
+        }
+        
         enemy.Animator.SetBool("IsWalking", true);
         enemy.Animator.SetBool("IsRunning", false);
         enemy.Animator.SetBool("IsSearching", false);
     }
+
     public override void Perform()
     {
         PatrolCycle();
         if(enemy.CanSeePlayer())
         {
-            stateMachine.ChangeState(new AttacakState());
+            stateMachine.ChangeState(new AttackState());
         }
     }
     public override void Exit()

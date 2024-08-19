@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+
 public class Enemy : MonoBehaviour
 {
     public Animator Animator { get; private set; }
@@ -9,63 +10,85 @@ public class Enemy : MonoBehaviour
     private NavMeshAgent agent;
     private GameObject player;
     private Vector3 lastKnownPos;
+
     public NavMeshAgent Agent { get => agent; }
     public GameObject Player { get => player; }
     public Vector3 LastKnownPos { get => lastKnownPos; set => lastKnownPos = value; }
 
+    [Header("Pathfinding")]
     public Path path;
-    public GameObject debugSphere;
     [Header("Sight Values")]
-    public float sightDistance=20f;
-    public float fieldOfView=85f;
-    public float eyeHeight;
+    public float sightDistance = 20f;
+    public float fieldOfView = 85f;
+    public float eyeHeight = 1.7f;
+
     [Header("Weapon Values")]
     public Transform gunBarrel;
-    [Range(0.1f,10f)]
-    public float fireRate;
-    [SerializeField] 
+    [Range(0.1f, 10f)]
+    public float fireRate = 1f;
+
+    [SerializeField]
     private string currentState;
+
+
     void Start()
     {
-        stateMachine=GetComponent<StateMachine>();
-        agent=GetComponent<NavMeshAgent>();
+        Animator = GetComponent<Animator>();
+        stateMachine = GetComponent<StateMachine>();
+        agent = GetComponent<NavMeshAgent>();
         stateMachine.Initialise();
-        player=GameObject.FindGameObjectWithTag("Player");
-        
+        player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player == null)
+        {
+            Debug.LogError("Player not found! Make sure the player has the 'Player' tag.");
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        CanSeePlayer();
-        currentState=stateMachine.activeState.ToString();
-        debugSphere.transform.position=lastKnownPos;
+        if (CanSeePlayer())
+        {
+            Debug.Log("Enemy sees the player!"); 
+            lastKnownPos = player.transform.position;
+            // Ekstra aksiyonlar burada gerçekleştirilebilir (örn. oyuncuya doğru hareket etmek)
+        }
     }
+
     public bool CanSeePlayer()
     {
-       if(player != null)
-       {
-          if(Vector3.Distance(transform.position,player.transform.position)<sightDistance)
-          {
-              Vector3 targetdirection= player.transform.position - transform.position- (Vector3.up * eyeHeight);
-              float angleToPlayer=Vector3.Angle(targetdirection,transform.forward);
-              if(angleToPlayer >= -fieldOfView && angleToPlayer <= fieldOfView)
-              {
-                 Ray ray =new Ray(transform.position+( Vector3.up * eyeHeight), targetdirection);
-                 RaycastHit hitInfo = new RaycastHit();
-                 if(Physics.Raycast(ray, out hitInfo, sightDistance))
-                 {
-                        if(hitInfo.transform.gameObject== player)
+        if (player != null)
+        {
+            float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+          
+
+            if (distanceToPlayer < sightDistance)
+            {
+                Vector3 targetDirection = (player.transform.position - transform.position).normalized;
+                float angleToPlayer = Vector3.Angle(targetDirection, transform.forward);
+
+               
+
+                if (angleToPlayer <= fieldOfView / 2) // Görüş açısını ikiye bölerek kullanıyoruz
+                {
+                    Vector3 rayOrigin = transform.position + (Vector3.up * eyeHeight);
+                    Ray ray = new Ray(rayOrigin, targetDirection);
+                    RaycastHit hitInfo;
+
+                    if (Physics.Raycast(ray, out hitInfo, sightDistance))
+                    {
+                        Debug.DrawRay(ray.origin, ray.direction * sightDistance, Color.red); // Ray'i çizdir
+
+                       
+                        if (hitInfo.transform.gameObject == player)
                         {
-                            Debug.DrawRay(ray.origin, ray.direction * sightDistance);
+                           
                             return true;
                         }
-                 }
-                
-              }
-          }
-          
-       }
-       return false;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
