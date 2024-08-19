@@ -19,14 +19,18 @@ public class AttackState : BaseState
 
     public override void Enter()
     {
-        enemy.Animator.SetBool("IsWalking", false);
+        // Koşma animasyonunu başlat
         enemy.Animator.SetBool("IsRunning", true);
-        enemy.Animator.SetBool("IsSearching", false);
+        enemy.Animator.SetBool("IsShootingWhileWalking", false);
+        enemy.Animator.SetBool("IsWalking", false);
     }
 
     public override void Exit()
     {
+        // Animasyonları sıfırla
         enemy.Animator.SetBool("IsRunning", false);
+        enemy.Animator.SetBool("IsShootingWhileWalking", false);
+        enemy.Animator.SetBool("IsWalking", false);
     }
 
     public override void Perform()
@@ -44,7 +48,23 @@ public class AttackState : BaseState
 
             if (shootTimer > enemy.fireRate)
             {
+                // Koşmayı durdur, yürümeye başla ve ateş et
+                enemy.Animator.SetBool("IsRunning", false);
+                enemy.Animator.SetBool("IsWalking", true);
+                enemy.Animator.SetBool("IsShootingWhileWalking", true);
+
                 Shoot();
+            }
+            else
+            {
+                // Ateş etme bitince tekrar koşmaya başla
+                enemy.Animator.SetBool("IsShootingWhileWalking", false);
+                
+                if (!enemy.Animator.GetBool("IsShootingWhileWalking"))
+                {
+                    enemy.Animator.SetBool("IsRunning", true);
+                    enemy.Animator.SetBool("IsWalking", false);
+                }
             }
 
             enemy.LastKnownPos = enemy.Player.transform.position;

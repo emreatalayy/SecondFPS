@@ -14,7 +14,7 @@ public class SearchState : BaseState
         searchTimer = 0; 
         moveTimer = 0;
         rotateTimer = 0;
-        isRotating = false;
+        isRotating = true; // Dönüşe başlamak için true olarak ayarlandı.
         enemy.Agent.SetDestination(enemy.LastKnownPos);
         enemy.Animator.SetBool("IsWalking", true);
         enemy.Animator.SetBool("IsRunning", false);
@@ -24,32 +24,32 @@ public class SearchState : BaseState
     public override void Perform()
     {
         if (enemy.CanSeePlayer())
+        {
             stateMachine.ChangeState(new AttackState());
+            return;
+        }
 
-        if (enemy.Agent.remainingDistance < enemy.Agent.stoppingDistance)
+        if (isRotating)
+        {
+            rotateTimer += Time.deltaTime;
+            enemy.Agent.isStopped = true; 
+            enemy.transform.Rotate(0, 360 * Time.deltaTime / 5, 0); 
+
+            if (rotateTimer > 5)
+            {
+                isRotating = false; 
+                enemy.Agent.isStopped = false; 
+
+                // Dönüş tamamlandıktan sonra tekrar hareket etmeye başlasın
+                enemy.Agent.SetDestination(enemy.LastKnownPos); // Son bilinen pozisyona tekrar git
+            }
+        }
+        else if (!enemy.Agent.pathPending && enemy.Agent.remainingDistance <= enemy.Agent.stoppingDistance)
         {
             searchTimer += Time.deltaTime;
             moveTimer += Time.deltaTime;
 
-            // Etrafında dönme işlemi
-            if (!isRotating)
-            {
-                isRotating = true;
-                rotateTimer = 0;
-            }
-
-            if (isRotating)
-            {
-                rotateTimer += Time.deltaTime;
-                enemy.transform.Rotate(0, 360 * Time.deltaTime / 5, 0); // 5 saniyede tam bir tur
-
-                if (rotateTimer > 5)
-                {
-                    isRotating = false; // Dönüş tamamlandığında dur
-                }
-            }
-
-            if (!isRotating && moveTimer > Random.Range(3, 5))
+            if (moveTimer > Random.Range(3, 5))
             {
                 enemy.Agent.SetDestination(enemy.transform.position + (Random.insideUnitSphere * 10));
                 moveTimer = 0;
