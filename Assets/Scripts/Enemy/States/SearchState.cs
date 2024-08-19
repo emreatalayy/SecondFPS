@@ -11,6 +11,9 @@ public class SearchState : BaseState
         searchTimer = 0; 
         moveTimer = 0;
         enemy.Agent.SetDestination(enemy.LastKnownPos);
+        enemy.Animator.SetBool("IsWalking", true);
+        enemy.Animator.SetBool("IsRunning", false);
+        enemy.Animator.SetBool("IsSearching", true);
     
     }
     public override void Perform()
@@ -37,6 +40,6 @@ public class SearchState : BaseState
     }
     public override void Exit()
     {
-        
+        enemy.Animator.SetBool("IsSearching", false);
     }
 }

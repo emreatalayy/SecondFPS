@@ -8,7 +8,9 @@ public class PatrolState : BaseState
     public float waitTimer;
     public override void Enter()
     {
-        
+        enemy.Animator.SetBool("IsWalking", true);
+        enemy.Animator.SetBool("IsRunning", false);
+        enemy.Animator.SetBool("IsSearching", false);
     }
     public override void Perform()
     {
@@ -20,6 +22,7 @@ public class PatrolState : BaseState
     }
     public override void Exit()
     {
+            enemy.Animator.SetBool("IsWalking", false);
     }
 
     public void PatrolCycle()

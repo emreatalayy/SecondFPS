@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
+    public Animator Animator { get; private set; }
     private StateMachine stateMachine;
     private NavMeshAgent agent;
     private GameObject player;

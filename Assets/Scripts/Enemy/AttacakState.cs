@@ -20,9 +20,13 @@ public class AttacakState : BaseState
     }
     public override void Enter()
     {
+        enemy.Animator.SetBool("IsWalking", false);
+        enemy.Animator.SetBool("IsRunning", true);
+        enemy.Animator.SetBool("IsSearching", false);
     }
     public override void Exit()
     {
+        enemy.Animator.SetBool("IsRunning", false);
     }
     public override void Perform()
     {
