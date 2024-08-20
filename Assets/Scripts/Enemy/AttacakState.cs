@@ -42,29 +42,26 @@ public class AttackState : BaseState
             losePlayerTimer = 0;
             shootTimer += Time.deltaTime;
 
-            // Düşman oyuncuya doğru bakar
             enemy.transform.LookAt(enemy.Player.transform);
-
-            // Düşman oyuncuyu takip eder
             enemy.Agent.SetDestination(enemy.Player.transform.position);
 
         if (shootTimer > enemy.fireRate)
         {
-            // Önce animasyonları durdur
+           
             enemy.Animator.SetBool("IsRunning", false);
             enemy.Animator.SetBool("IsWalking", true);
             
-            // Sonra ateş etme animasyonunu başlat
+
             enemy.Animator.SetBool("IsShootingWhileWalking", true);
-              Debug.Log("IsShootingWhileWalking set to true: " + enemy.Animator.GetBool("IsShootingWhileWalking"));
+            Debug.Log("IsShootingWhileWalking set to true: " + enemy.Animator.GetBool("IsShootingWhileWalking"));
             Shoot();
         }
         else
         {
-            // Ateş etme bitince tekrar koşmaya başla
+            
             enemy.Animator.SetBool("IsShootingWhileWalking", false);
             
-            // Eğer ateş etme animasyonu kapalıysa, koşma animasyonuna dön
+          
             if (!enemy.Animator.GetBool("IsShootingWhileWalking"))
             {
                 enemy.Animator.SetBool("IsRunning", true);

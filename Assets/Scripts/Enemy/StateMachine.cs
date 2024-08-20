@@ -8,16 +8,11 @@ public class StateMachine : MonoBehaviour
     
     public void Initialise()
     {
-    
         ChangeState(new PatrolState());
-     
     }
     void Start()
-    {
-        
+    {   
     }
-
-    // Update is called once per frame
     void Update()
     {
         if(activeState != null)

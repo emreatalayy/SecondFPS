@@ -49,9 +49,7 @@ public class Enemy : MonoBehaviour
     {
         if (CanSeePlayer())
         {
-
             lastKnownPos = player.transform.position;
-            // Ekstra aksiyonlar burada gerçekleştirilebilir (örn. oyuncuya doğru hareket etmek)
         }
     }
 
@@ -77,9 +75,7 @@ public class Enemy : MonoBehaviour
 
                     if (Physics.Raycast(ray, out hitInfo, sightDistance))
                     {
-                        Debug.DrawRay(ray.origin, ray.direction * sightDistance, Color.red); // Ray'i çizdir
-
-                       
+                        Debug.DrawRay(ray.origin, ray.direction * sightDistance, Color.red); 
                         if (hitInfo.transform.gameObject == player)
                         {
                            
