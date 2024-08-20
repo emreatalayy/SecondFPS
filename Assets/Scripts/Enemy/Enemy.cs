@@ -49,7 +49,7 @@ public class Enemy : MonoBehaviour
     {
         if (CanSeePlayer())
         {
-            Debug.Log("Enemy sees the player!"); 
+
             lastKnownPos = player.transform.position;
             // Ekstra aksiyonlar burada gerçekleştirilebilir (örn. oyuncuya doğru hareket etmek)
         }

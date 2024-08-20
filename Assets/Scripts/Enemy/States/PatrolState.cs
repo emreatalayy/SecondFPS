@@ -10,13 +10,11 @@ public class PatrolState : BaseState
     {
         if (enemy == null)
         {
-            Debug.LogError("PatrolState'te enemy nesnesi null.");
             return;
         }
         
         if (enemy.Animator == null)
         {
-            Debug.LogError("Enemy nesnesinde Animator bileşeni eksik.");
             return;
         }
         

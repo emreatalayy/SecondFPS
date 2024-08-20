@@ -30,38 +30,43 @@ public class ShootWhileMovingState : BaseState
         enemy.Animator.SetBool("IsShootingWhileWalking", false); // Yürürken ateş etme animasyonu durur
     }
 
-    public override void Perform()
+   public override void Perform()
+{
+    if (enemy.CanSeePlayer())
     {
-        if (enemy.CanSeePlayer())
+        shootTimer += Time.deltaTime;
+
+        // Düşman oyuncuya doğru bakar ve ona doğru hareket eder
+        enemy.transform.LookAt(enemy.Player.transform);
+        enemy.Agent.SetDestination(enemy.Player.transform.position);
+
+        if (shootTimer > enemy.fireRate)
         {
-            shootTimer += Time.deltaTime;
-
-            // Düşman oyuncuya doğru bakar ve ona doğru hareket eder
-            enemy.transform.LookAt(enemy.Player.transform);
-            enemy.Agent.SetDestination(enemy.Player.transform.position);
-
-            if (shootTimer > enemy.fireRate)
-            {
-                enemy.Animator.SetBool("IsShootingWhileWalking", true); // Ateş etme zamanı geldiğinde bu değeri true yap
-                Shoot(); // Ateş et
-            }
-            else
-            {
-                enemy.Animator.SetBool("IsShootingWhileWalking", false); // Eğer ateş zamanı değilse false tut
-            }
-
-            enemy.LastKnownPos = enemy.Player.transform.position;
-
-            // Belirli bir süre sonra tekrar attack state'e geçer
-            if (shootTimer > 5.0f) // Bu süreyi ihtiyacınıza göre ayarlayın
-            {
-                stateMachine.ChangeState(new AttackState());
-            }
+            enemy.Animator.SetBool("IsShootingWhileWalking", true); // Ateş etme zamanı geldiğinde bu değeri true yap
+            Shoot(); // Ateş et
         }
         else
         {
-            // Oyuncu kaybolduysa SearchState'e geç
-            stateMachine.ChangeState(new SearchState());
+            // Eğer ateş zamanı değilse animasyonu false yapmadan önce durumu kontrol et
+            if (enemy.Animator.GetBool("IsShootingWhileWalking"))
+            {
+                enemy.Animator.SetBool("IsShootingWhileWalking", false);
+            }
+        }
+
+        enemy.LastKnownPos = enemy.Player.transform.position;
+
+        // Belirli bir süre sonra tekrar attack state'e geçer
+        if (shootTimer > 5.0f) // Bu süreyi ihtiyacınıza göre ayarlayın
+        {
+            stateMachine.ChangeState(new AttackState());
         }
     }
+    else
+    {
+        // Oyuncu kaybolduysa SearchState'e geç
+        stateMachine.ChangeState(new SearchState());
+    }
+}
+
 }

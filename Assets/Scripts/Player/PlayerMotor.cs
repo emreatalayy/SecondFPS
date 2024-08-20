@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class PlayerMotor : MonoBehaviour
 {
@@ -19,17 +18,19 @@ public class PlayerMotor : MonoBehaviour
     public float crouchScale = 0.5f;  // Çömelme sırasında oyuncunun boyutu
     private Vector3 originalScale;
 
-    // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<CharacterController>();
         originalScale = transform.localScale;  // Oyuncunun başlangıç boyutunu sakla
     }
 
-    // Update is called once per frame
     void Update()
     {
         isGrounded = controller.isGrounded;
+
+        // Hareket işleme
+        ProcessInput();
+
         if (lerpCrouch)
         {
             crouchTimer += Time.deltaTime;
@@ -49,6 +50,44 @@ public class PlayerMotor : MonoBehaviour
                 crouchTimer = 0f;
             }
         }
+
+        // Yerçekimi ve hareketin uygulanması
+        playerVelocity.y += gravity * Time.deltaTime;
+        if (isGrounded && playerVelocity.y < 0)
+            playerVelocity.y = -2f;
+
+        controller.Move(playerVelocity * Time.deltaTime);
+    }
+
+    void ProcessInput()
+    {
+        // WASD ile hareketi kontrol et
+        float moveX = Input.GetAxis("Horizontal");
+        float moveZ = Input.GetAxis("Vertical");
+
+        ProcessMove(new Vector2(moveX, moveZ));
+
+        // Zıplama
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Jump();
+        }
+
+        // Çömelme
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            StartCrouch();
+        }
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            StopCrouch();
+        }
+
+        // Sprint
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Sprint();
+        }
     }
 
     public void ProcessMove(Vector2 input)
@@ -57,18 +96,13 @@ public class PlayerMotor : MonoBehaviour
         moveDirection.x = input.x;
         moveDirection.z = input.y;
         controller.Move(transform.TransformDirection(moveDirection) * speed * Time.deltaTime);
-        playerVelocity.y += gravity * Time.deltaTime;
-        if (isGrounded && playerVelocity.y < 0)
-            playerVelocity.y = -2f;
-
-        controller.Move(playerVelocity * Time.deltaTime);
     }
 
     public void Jump()
     {
         if (isGrounded)
         {
-            playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+            playerVelocity.y = Mathf.Sqrt(jumpHeight * -2.0f * gravity);
         }
     }
 

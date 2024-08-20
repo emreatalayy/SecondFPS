@@ -14,6 +14,8 @@ public class AttackState : BaseState
         Vector3 shootDirection = (enemy.Player.transform.position - gunbarrel.position).normalized;
         bullet.GetComponent<Rigidbody>().velocity = Quaternion.AngleAxis(Random.Range(-3f, 3f), Vector3.up) * shootDirection * 40;
         Debug.Log("Shoot");
+        
+        //enemy.Animator.SetBool("IsShootingWhileWalking", false);
         shootTimer = 0;
     }
 
@@ -46,26 +48,30 @@ public class AttackState : BaseState
             // Düşman oyuncuyu takip eder
             enemy.Agent.SetDestination(enemy.Player.transform.position);
 
-            if (shootTimer > enemy.fireRate)
+        if (shootTimer > enemy.fireRate)
+        {
+            // Önce animasyonları durdur
+            enemy.Animator.SetBool("IsRunning", false);
+            enemy.Animator.SetBool("IsWalking", true);
+            
+            // Sonra ateş etme animasyonunu başlat
+            enemy.Animator.SetBool("IsShootingWhileWalking", true);
+              Debug.Log("IsShootingWhileWalking set to true: " + enemy.Animator.GetBool("IsShootingWhileWalking"));
+            Shoot();
+        }
+        else
+        {
+            // Ateş etme bitince tekrar koşmaya başla
+            enemy.Animator.SetBool("IsShootingWhileWalking", false);
+            
+            // Eğer ateş etme animasyonu kapalıysa, koşma animasyonuna dön
+            if (!enemy.Animator.GetBool("IsShootingWhileWalking"))
             {
-                // Koşmayı durdur, yürümeye başla ve ateş et
-                enemy.Animator.SetBool("IsRunning", false);
-                enemy.Animator.SetBool("IsWalking", true);
-                enemy.Animator.SetBool("IsShootingWhileWalking", true);
+                enemy.Animator.SetBool("IsRunning", true);
+                enemy.Animator.SetBool("IsWalking", false);
+            }
+        }
 
-                Shoot();
-            }
-            else
-            {
-                // Ateş etme bitince tekrar koşmaya başla
-                enemy.Animator.SetBool("IsShootingWhileWalking", false);
-                
-                if (!enemy.Animator.GetBool("IsShootingWhileWalking"))
-                {
-                    enemy.Animator.SetBool("IsRunning", true);
-                    enemy.Animator.SetBool("IsWalking", false);
-                }
-            }
 
             enemy.LastKnownPos = enemy.Player.transform.position;
         }

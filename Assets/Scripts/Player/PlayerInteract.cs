@@ -11,34 +11,30 @@ public class PlayerInteract : MonoBehaviour
     private LayerMask mask;
 
     private PlayerUI playerUI;
-    private InputManager inputManager;
 
     void Start()
     {
         cam = GetComponent<PlayerLook>().cam; 
         playerUI = GetComponent<PlayerUI>(); 
-        inputManager = GetComponent<InputManager>();
-
-        if(inputManager != null)
-        {
-            inputManager = FindObjectOfType<InputManager>();
-        }
     }
 
     void Update()
     {
         playerUI.UpdateText(string.Empty);
+        
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         Debug.DrawRay(ray.origin, ray.direction * distance, Color.red);
-        RaycastHit hitInfo;
-        if(Physics.Raycast(ray, out hitInfo, distance, mask))
+        
+        if (Physics.Raycast(ray, out RaycastHit hitInfo, distance, mask))
         {
-            if(hitInfo.collider.GetComponent<Interactable>() != null)
+            Interactable interactable = hitInfo.collider.GetComponent<Interactable>();
+
+            if (interactable != null)
             {
-                Interactable interactable = hitInfo.collider.GetComponent<Interactable>();
                 playerUI.UpdateText(interactable.promptMessage);
 
-                if (inputManager.GetOnFootActions().Interact.triggered)
+                
+                if (Input.GetKeyDown(KeyCode.E))
                 {
                     interactable.BaseInteract();
                 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+/*
 public partial class InputManager : MonoBehaviour
 {
     private InputManager inputManager;
@@ -50,3 +50,4 @@ public partial class InputManager : MonoBehaviour
         return onFoot;
     }
 }
+*/
