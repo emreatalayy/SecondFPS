@@ -15,13 +15,13 @@ public class PlayerMotor : MonoBehaviour
     private bool sprinting = false;
     private bool lerpCrouch = false;
     private float crouchTimer = 0f;
-    public float crouchScale = 0.5f;  // Çömelme sırasında oyuncunun boyutu
+    public float crouchScale = 0.5f;  
     private Vector3 originalScale;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        originalScale = transform.localScale;  // Oyuncunun başlangıç boyutunu sakla
+        originalScale = transform.localScale; 
     }
 
     void Update()
@@ -51,7 +51,7 @@ public class PlayerMotor : MonoBehaviour
             }
         }
 
-        // Yerçekimi ve hareketin uygulanması
+
         playerVelocity.y += gravity * Time.deltaTime;
         if (isGrounded && playerVelocity.y < 0)
             playerVelocity.y = -2f;
