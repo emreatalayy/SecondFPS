@@ -242,7 +242,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 72e0ba31f3f9c46458751515861aa05a, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 1
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
@@ -3098,7 +3098,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 0.972549, g: 0.9607843, b: 0.8784314, a: 1}
-  m_Intensity: 2.14
+  m_Intensity: 0.93
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -3647,7 +3647,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 0.972549, g: 0.9607843, b: 0.8784314, a: 1}
-  m_Intensity: 1.27
+  m_Intensity: 0.82
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -3863,6 +3863,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77b56fc8c7185744fa3407ebfd26807d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputManager: {fileID: 0}
+  motor: {fileID: 0}
+  look: {fileID: 0}
 --- !u!114 &7437453088905114981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3972,6 +3975,8 @@ MonoBehaviour:
   cam: {fileID: 7437453088905114988}
   xSensitivity: 30
   ySensitivity: 30
+  smoothTime: 0.1
+  sensitivityMultiplier: 0.5
 --- !u!114 &7437453088905115003
 MonoBehaviour:
   m_ObjectHideFlags: 0
