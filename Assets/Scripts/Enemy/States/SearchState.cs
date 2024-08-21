@@ -11,20 +11,26 @@ public class SearchState : BaseState
 
     public override void Enter()
     {
+        Debug.Log("Entering SearchState");
         searchTimer = 0; 
         moveTimer = 0;
         rotateTimer = 0;
-        isRotating = true; // Dönüşe başlamak için true olarak ayarlandı.
+        isRotating = true; // Start rotating
+
         enemy.Agent.SetDestination(enemy.LastKnownPos);
+        enemy.Agent.isStopped = false; // Ensure the agent is not stopped
         enemy.Animator.SetBool("IsWalking", true);
         enemy.Animator.SetBool("IsRunning", false);
         enemy.Animator.SetBool("IsSearching", true);
+
+        Debug.Log("Initial Destination: " + enemy.LastKnownPos);
     }
 
     public override void Perform()
     {
         if (enemy.CanSeePlayer())
         {
+            Debug.Log("Player detected, switching to AttackState");
             stateMachine.ChangeState(new AttackState());
             return;
         }
@@ -32,16 +38,15 @@ public class SearchState : BaseState
         if (isRotating)
         {
             rotateTimer += Time.deltaTime;
-            enemy.Agent.isStopped = true; 
-            enemy.transform.Rotate(0, 360 * Time.deltaTime / 5, 0); 
+            enemy.Agent.isStopped = true; // Stop the agent to rotate in place
+            enemy.transform.Rotate(0, 360 * Time.deltaTime / 5, 0); // Rotate over 5 seconds
 
             if (rotateTimer > 5)
             {
-                isRotating = false; 
-                enemy.Agent.isStopped = false; 
-
-                // Dönüş tamamlandıktan sonra tekrar hareket etmeye başlasın
-                enemy.Agent.SetDestination(enemy.LastKnownPos); // Son bilinen pozisyona tekrar git
+                Debug.Log("Rotation complete, resuming movement");
+                isRotating = false;
+                enemy.Agent.isStopped = false; // Resume agent movement
+                enemy.Agent.SetDestination(enemy.LastKnownPos); // Head back to the last known position
             }
         }
         else if (!enemy.Agent.pathPending && enemy.Agent.remainingDistance <= enemy.Agent.stoppingDistance)
@@ -51,12 +56,15 @@ public class SearchState : BaseState
 
             if (moveTimer > Random.Range(3, 5))
             {
-                enemy.Agent.SetDestination(enemy.transform.position + (Random.insideUnitSphere * 10));
+                Vector3 randomDestination = enemy.transform.position + (Random.insideUnitSphere * 10);
+                enemy.Agent.SetDestination(randomDestination);
                 moveTimer = 0;
+                Debug.Log("Moving to new random destination: " + randomDestination);
             }
 
             if (searchTimer > 10)
             {
+                Debug.Log("Search time exceeded, switching to PatrolState");
                 stateMachine.ChangeState(new PatrolState());
             }
         }

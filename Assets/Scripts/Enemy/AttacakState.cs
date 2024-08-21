@@ -21,10 +21,9 @@ public class AttackState : BaseState
 
     public override void Enter()
     {
-
         originalSpeed = enemy.Agent.speed;
 
-        
+        enemy.Agent.isStopped = false;  // Agent'in hareket etmesine izin ver
         enemy.Animator.SetBool("IsRunning", true);
         enemy.Agent.speed = 2f;  
     }
@@ -55,12 +54,17 @@ public class AttackState : BaseState
         else
         {
             losePlayerTimer += Time.deltaTime;
-            if (losePlayerTimer > 8)
+            if (losePlayerTimer > 3)
             {
                 stateMachine.ChangeState(new SearchState());
             }
+            else
+            {
+                enemy.Agent.SetDestination(enemy.LastKnownPos); // Son bilinen pozisyona gitmeye devam et
+            }
         }
     }
+
 
     void Start()
     {
