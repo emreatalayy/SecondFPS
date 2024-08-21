@@ -7,6 +7,7 @@ public class AttackState : BaseState
     private float shootTimer;
     private float losePlayerTimer;
     private float originalSpeed;  // to store the original speed of the enemy
+    private float stoppingDistance = 2f;  // Mesafe tanımlandı, düşman bu mesafede duracak
 
     public void Shoot()
     {
@@ -25,7 +26,7 @@ public class AttackState : BaseState
 
         enemy.Agent.isStopped = false;  
         enemy.Animator.SetBool("IsRunning", true);
-        enemy.Agent.speed = 2f;  
+        enemy.Agent.speed = 3f;  
     }
 
     public override void Exit()
@@ -41,10 +42,21 @@ public class AttackState : BaseState
             losePlayerTimer = 0;
             shootTimer += Time.deltaTime;
 
-            enemy.transform.LookAt(enemy.Player.transform);
-            enemy.Agent.SetDestination(enemy.Player.transform.position);
+            float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.Player.transform.position);
 
-            if (shootTimer > enemy.fireRate)
+            if (distanceToPlayer > stoppingDistance)
+            {
+                enemy.Agent.isStopped = false;
+                enemy.Agent.SetDestination(enemy.Player.transform.position);
+            }
+            else
+            {
+                enemy.Agent.isStopped = true;
+            }
+
+            enemy.transform.LookAt(enemy.Player.transform);
+
+            if (shootTimer > enemy.fireRate && distanceToPlayer <= stoppingDistance)
             {
                 Shoot();
             }
@@ -64,7 +76,6 @@ public class AttackState : BaseState
             }
         }
     }
-
 
     void Start()
     {
