@@ -6,6 +6,7 @@ public class AttackState : BaseState
 {
     private float shootTimer;
     private float losePlayerTimer;
+    private float originalSpeed;  // Botun orijinal hızı için değişken
 
     public void Shoot()
     {
@@ -15,24 +16,24 @@ public class AttackState : BaseState
         bullet.GetComponent<Rigidbody>().velocity = Quaternion.AngleAxis(Random.Range(-3f, 3f), Vector3.up) * shootDirection * 40;
         Debug.Log("Shoot");
         
-        //enemy.Animator.SetBool("IsShootingWhileWalking", false);
         shootTimer = 0;
     }
 
     public override void Enter()
     {
-        // Koşma animasyonunu başlat
+        // Orijinal hız değerini sakla
+        originalSpeed = enemy.Agent.speed;
+
+        // Koşma animasyonunu başlat ve hızı arttır
         enemy.Animator.SetBool("IsRunning", true);
-        enemy.Animator.SetBool("IsShootingWhileWalking", false);
-        enemy.Animator.SetBool("IsWalking", false);
+        enemy.Agent.speed = 2f;  // Hızı 3'e çıkar
     }
 
     public override void Exit()
     {
-        // Animasyonları sıfırla
+        // Animasyonları sıfırla ve hızı orijinal haline döndür
         enemy.Animator.SetBool("IsRunning", false);
-        enemy.Animator.SetBool("IsShootingWhileWalking", false);
-        enemy.Animator.SetBool("IsWalking", false);
+        enemy.Agent.speed = originalSpeed;  // Hızı orijinal değere döndür
     }
 
     public override void Perform()
@@ -45,30 +46,10 @@ public class AttackState : BaseState
             enemy.transform.LookAt(enemy.Player.transform);
             enemy.Agent.SetDestination(enemy.Player.transform.position);
 
-        if (shootTimer > enemy.fireRate)
-        {
-           
-            enemy.Animator.SetBool("IsRunning", false);
-            enemy.Animator.SetBool("IsWalking", true);
-            
-
-            enemy.Animator.SetBool("IsShootingWhileWalking", true);
-            Debug.Log("IsShootingWhileWalking set to true: " + enemy.Animator.GetBool("IsShootingWhileWalking"));
-            Shoot();
-        }
-        else
-        {
-            
-            enemy.Animator.SetBool("IsShootingWhileWalking", false);
-            
-          
-            if (!enemy.Animator.GetBool("IsShootingWhileWalking"))
+            if (shootTimer > enemy.fireRate)
             {
-                enemy.Animator.SetBool("IsRunning", true);
-                enemy.Animator.SetBool("IsWalking", false);
+                Shoot();
             }
-        }
-
 
             enemy.LastKnownPos = enemy.Player.transform.position;
         }
