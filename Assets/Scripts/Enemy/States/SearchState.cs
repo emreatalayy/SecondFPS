@@ -15,10 +15,10 @@ public class SearchState : BaseState
         searchTimer = 0; 
         moveTimer = 0;
         rotateTimer = 0;
-        isRotating = true; // Start rotating
+        isRotating = true; 
 
         enemy.Agent.SetDestination(enemy.LastKnownPos);
-        enemy.Agent.isStopped = false; // Ensure the agent is not stopped
+        enemy.Agent.isStopped = false; 
         enemy.Animator.SetBool("IsWalking", true);
         enemy.Animator.SetBool("IsRunning", false);
         enemy.Animator.SetBool("IsSearching", true);
@@ -38,15 +38,14 @@ public class SearchState : BaseState
         if (isRotating)
         {
             rotateTimer += Time.deltaTime;
-            enemy.Agent.isStopped = true; // Stop the agent to rotate in place
-            enemy.transform.Rotate(0, 360 * Time.deltaTime / 5, 0); // Rotate over 5 seconds
-
+            enemy.Agent.isStopped = true; 
+            enemy.transform.Rotate(0, 360 * Time.deltaTime / 5, 0); 
             if (rotateTimer > 5)
             {
                 Debug.Log("Rotation complete, resuming movement");
                 isRotating = false;
-                enemy.Agent.isStopped = false; // Resume agent movement
-                enemy.Agent.SetDestination(enemy.LastKnownPos); // Head back to the last known position
+                enemy.Agent.isStopped = false; 
+                enemy.Agent.SetDestination(enemy.LastKnownPos); 
             }
         }
         else if (!enemy.Agent.pathPending && enemy.Agent.remainingDistance <= enemy.Agent.stoppingDistance)

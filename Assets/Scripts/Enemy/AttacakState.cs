@@ -23,7 +23,7 @@ public class AttackState : BaseState
     {
         originalSpeed = enemy.Agent.speed;
 
-        enemy.Agent.isStopped = false;  // Agent'in hareket etmesine izin ver
+        enemy.Agent.isStopped = false;  
         enemy.Animator.SetBool("IsRunning", true);
         enemy.Agent.speed = 2f;  
     }
@@ -60,7 +60,7 @@ public class AttackState : BaseState
             }
             else
             {
-                enemy.Agent.SetDestination(enemy.LastKnownPos); // Son bilinen pozisyona gitmeye devam et
+                enemy.Agent.SetDestination(enemy.LastKnownPos); 
             }
         }
     }
