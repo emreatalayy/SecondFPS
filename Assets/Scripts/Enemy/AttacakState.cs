@@ -6,7 +6,7 @@ public class AttackState : BaseState
 {
     private float shootTimer;
     private float losePlayerTimer;
-    private float originalSpeed;  // Botun orijinal hızı için değişken
+    private float originalSpeed;  // to store the original speed of the enemy
 
     public void Shoot()
     {
@@ -21,19 +21,18 @@ public class AttackState : BaseState
 
     public override void Enter()
     {
-        // Orijinal hız değerini sakla
+
         originalSpeed = enemy.Agent.speed;
 
-        // Koşma animasyonunu başlat ve hızı arttır
+        
         enemy.Animator.SetBool("IsRunning", true);
-        enemy.Agent.speed = 2f;  // Hızı 3'e çıkar
+        enemy.Agent.speed = 2f;  
     }
 
     public override void Exit()
     {
-        // Animasyonları sıfırla ve hızı orijinal haline döndür
         enemy.Animator.SetBool("IsRunning", false);
-        enemy.Agent.speed = originalSpeed;  // Hızı orijinal değere döndür
+        enemy.Agent.speed = originalSpeed; 
     }
 
     public override void Perform()
