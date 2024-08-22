@@ -8,6 +8,7 @@ public class AttackState : BaseState
     private float losePlayerTimer;
     private float originalSpeed;  // to store the original speed of the enemy
     private float stoppingDistance = 2f;  // Mesafe tanımlandı, düşman bu mesafede duracak
+    private float minimumShootingDistance = 10f; // Minimum mesafe tanımlandı, bu mesafeden itibaren ateş edecek
 
     public void Shoot()
     {
@@ -48,19 +49,28 @@ public class AttackState : BaseState
             {
                 enemy.Agent.isStopped = false;
                 enemy.Agent.SetDestination(enemy.Player.transform.position);
+
+                if (distanceToPlayer <= minimumShootingDistance)
+                {
+                    // Minimum mesafe içindeyse ve henüz stoppingDistance'a ulaşmadıysa, hareket ederken ateş et
+                    if (shootTimer > enemy.fireRate)
+                    {
+                        Shoot();
+                    }
+                }
             }
             else
             {
+                // stoppingDistance içindeyse, durarak ateş et
                 enemy.Agent.isStopped = true;
+
+                if (shootTimer > enemy.fireRate)
+                {
+                    Shoot();
+                }
             }
 
             enemy.transform.LookAt(enemy.Player.transform);
-
-            if (shootTimer > enemy.fireRate && distanceToPlayer <= stoppingDistance)
-            {
-                Shoot();
-            }
-
             enemy.LastKnownPos = enemy.Player.transform.position;
         }
         else
